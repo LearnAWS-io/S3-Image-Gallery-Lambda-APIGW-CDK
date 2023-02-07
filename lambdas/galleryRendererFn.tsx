@@ -9,7 +9,7 @@ import React from "react";
 import { getImageUrls } from "./get-image-urls";
 import ImageList from "./ImageList";
 
-const wrapInHTML = (content: string, css: string) => `
+const wrapInHTML = (content: string, css: string, js: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +22,9 @@ const wrapInHTML = (content: string, css: string) => `
 <body>
   ${content} 
 </body>
+<script>
+  ${js}
+</script>
 </html>
 `;
 
@@ -44,8 +47,15 @@ export const handler = async (
     "utf8"
   );
 
+  // read the JS from public
+  const jsString = await readFile(
+    // get the full path of css file
+    join(__dirname, "./public/upload.js"),
+    "utf8"
+  );
+
   return {
-    body: wrapInHTML(imageHTML, cssString),
+    body: wrapInHTML(imageHTML, cssString, jsString),
     headers: {
       "content-type": "text/html; charset=utf-8",
     },
