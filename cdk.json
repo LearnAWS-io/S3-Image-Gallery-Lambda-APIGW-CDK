@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/lambda-api-gw-cdk.ts",
+  "app": "npx tsx bin/lambda-api-gw-cdk.ts",
   "requireApproval": "never",
   "watch": {
     "include": ["**"],
