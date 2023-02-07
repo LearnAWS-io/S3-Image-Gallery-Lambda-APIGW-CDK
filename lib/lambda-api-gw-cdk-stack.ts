@@ -17,14 +17,26 @@ export class LambdaApiGwCdkStack extends cdk.Stack {
     const kittyBucket = new Bucket(this, "kitten-gallery");
 
     const lambdaFn = new NodejsFunction(this, "my-lambda-fn", {
-      entry: "lambdas/hello-api.ts",
+      entry: "lambdas/galleryRendererFn.tsx",
       runtime: Runtime.NODEJS_18_X,
+
       environment: {
         BUCKET_NAME: kittyBucket.bucketName,
       },
       bundling: {
-        target: "es2022",
+        target: "esnext",
         format: OutputFormat.ESM,
+        // Fix react renderToString dynamic import and others
+        banner: `import { createRequire } from 'module';const require = createRequire(import.meta.url);`,
+        workingDirectory: "./lambdas",
+        commandHooks: {
+          afterBundling(inputDir: string, outputDir: string): string[] {
+            return [`cp -r ${inputDir}/lambdas/public ${outputDir}/`];
+          },
+          beforeBundling: () => [],
+
+          beforeInstall: () => [],
+        },
       },
     });
 
